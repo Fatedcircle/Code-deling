@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binsta</title>
+    <link rel="stylesheet" href="/style.css">
+    <!-- Highlight.js CSS (Light Theme, je kunt ook 'dark' of een andere kiezen) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
+</head>
+
+<body>
+    <header class="relative bg-gray-400">
+        {% block header %}
+            {% include "header.twig" %}
+        {% endblock header %}
+    </header>
+
+    <p>De URI is: {{ requestUri }}</p>
+    <main class="mb-14 px-4 sm:px-6 lg:px-8">
+        {% block main %}
+        {% endblock main %}
+    </main>
+
+    <footer class="bg-gray-800 text-white py-4 fixed bottom-0 w-full">
+        <div class="container mx-auto text-center">
+            <p class="text-sm sm:text-base">&copy; 2025 Binsta. Alle rechten voorbehouden.</p>
+        </div>
+    </footer>
+
+    <!-- Highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const profileImage = document.getElementById("profile-avatar");
+            const dropdownMenu = document.getElementById("profile-dropdown-menu");
+        
+            if (profileImage && dropdownMenu) {
+                profileImage.addEventListener("click", function (event) {
+                    event.stopPropagation(); // Voorkomt dat het meteen sluit
+                    dropdownMenu.classList.toggle("hidden");
+                });
+        
+                // Sluit de dropdown als je ergens anders klikt
+                document.addEventListener("click", function (event) {
+                    if (!profileImage.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                        dropdownMenu.classList.add("hidden");
+                    }
+                });
+            }
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+
+</html>

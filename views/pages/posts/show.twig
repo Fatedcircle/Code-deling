@@ -1,0 +1,75 @@
+{% extends "layouts/main.twig" %}
+
+{% block header %}{{ parent() }}{% endblock %}
+
+{% block main %}
+<section class="w-11/12 2xl:w-1/2 m-auto">
+<div class="post mx-auto my-8 p-6 bg-white rounded-lg text-sky-400 underline shadow-lg w-11/12 2xl:w-1/2"><a href="/">Terug naar alle posts</a></div>
+{% if session.user and session.user.id == post.user_id %}
+    <a href="/post/{{ post.id }}/edit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
+        ✏️ Bewerken
+    </a>
+{% endif %}
+<div class="post mx-auto my-8 p-6 bg-white rounded-lg shadow-lg code-block {{ post.theme }}"">
+    <p class=" text-sm text-gray-500">
+    Gepost door
+    <a href="/profile/{{ post.user.username }}" class="text-red-600 hover:underline">
+        {{ post.user.username }}
+    </a>
+    </p>
+    <h1>{{ post.title }}</h1>
+    <p>{{ post.content }}</p>
+    <p class="text-center my-2 font-semibold text-lg">{{ post.language }}</p>
+    <pre><code class="{{ post.language | lower }} mb-2">{{ post.language_content }}</code></pre>
+    <p>{{ post.caption }}</p>
+    
+    <p class="post-author text-sm mb-4">Aangemaakt door <span class="font-semibold">{{ post.user.username
+            }}</span></p>
+
+    <div class="post-likes mb-6 flex items-center">
+        <form action="/" method="POST">
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            <button type="submit"
+                class="like-button bg-red-300 text-white px-4 py-2 rounded-full transition-colors hover:bg-red-600">
+                {% if post.liked %}
+                🧠 Unlike
+                {% else %}
+                ❤️ Like
+                {% endif %}
+            </button>
+        </form>
+        <span class="ml-4 text-lg font-medium">{{ post.like_count }} likes</span>
+    </div>
+
+    <div class="comments mb-8">
+        <h2 class="text-2xl font-semiboldmb-4">Reacties:</h2>
+        {% if comments is not empty %}
+        {% for comment in comments %}
+        <div class="comment bg-gray-100 p-4 rounded-lg mb-4">
+            <p class="text-gray-700">{{ comment.content }}</p>
+            <p class="comment-author text-sm text-gray-500 mt-2">Reactie van <span class="font-semibold">{{
+                    comment.user.username }}</span> op {{ comment.created_at | date('d-m-Y H:i') }}</p>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="text-gray-500">Er zijn nog geen reacties op deze post.</p>
+        {% endif %}
+    </div>
+{% if isLoggedIn %}
+    <div class="add-comment bg-gray-50 p-4 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Voeg een reactie toe</h3>
+        <form action="/comment" method="POST">
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            <textarea name="content" placeholder="Je reactie..." required
+                class="w-full p-3 border border-gray-300 rounded-lg mb-4 text-black"></textarea>
+            <button type="submit"
+                class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">Reactie
+                plaatsen</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block extra_scripts %}
+{{ parent() }}
+{% endblock %}

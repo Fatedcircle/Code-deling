@@ -1,0 +1,149 @@
+{% extends "layouts/main.twig" %}
+
+{% block main %}
+<section class="w-2/3 m-auto">
+    <h2 class="text-3xl font-bold text-center mb-6">Profiel van {{ user.username }}</h2>
+    {# <img src="/{{ user.profile_picture }}" alt="Profiel foto" class="mx-auto mb-4 w-[100px]"> #}
+    <div class="profile-header">
+        {% if user.profile_picture %}
+            <!-- Als er een profielfoto is, toon deze afbeelding -->
+            <img src="/{{ user.profile_picture }}" alt="{{ user.username }}" class="profile-avatar mx-auto mb-4 w-[100px]">
+        {% else %}
+            <!-- Als er geen profielfoto is, toon de eerste letter van de gebruikersnaam als fallback -->
+            <div class="profile-avatar fallback-avatar mx-auto mb-4 w-[100px]">
+                {{ user.username | slice(0,1) | upper }}
+            </div>
+        {% endif %}
+    </div>
+    
+
+    {# <div class="grid grid-cols-2 gap-8 bg-white p-6 rounded-lg shadow-lg"> #}
+    <div class="grid 2xl:grid-cols-2 gap-8 bg-white p-6 rounded-lg shadow-lg">
+        <div class="2xl:border-r pr-6">
+            <h3 class="text-xl font-semibold mb-4">Over Mij</h3>
+            <p class="text-gray-700">
+                {% if user.bio %}
+                {{ user.bio }}
+                {% else %}
+                <em>Deze gebruiker heeft nog geen bio toegevoegd.</em>
+                {% endif %}
+            </p>
+            <hr class="mt-4 2xl:hidden">
+        </div>
+
+        <div>
+            <h3 class="text-xl font-semibold mb-4">Posts van {{ user.username }}</h3>
+            {% if posts|length > 0 %}
+            <ul class="list-none pl-6 space-y-2">
+                {% for post in posts %}
+                    <li class="flex items-center justify-between">
+                        <!-- Link naar de post -->
+                        <a href="/post/{{ post.id }}" class="text-blue-600 hover:underline">{{ post.title }}</a>
+            
+                        {% if isOwnProfile %}
+                            <!-- Knoppen voor bewerken en verwijderen, nu naast elkaar -->
+                            <div class="flex space-x-2 ml-auto">
+                                <!-- Knop voor het bewerken van de post -->
+                                <a href="/edit/{{ post.id }}" class="text-white bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-md text-sm">
+                                    Bewerken
+                                </a>
+            
+                                <!-- Knop voor het verwijderen van de post -->
+                                <form action="/delete/{{ post.id }}" method="POST" class="inline" id="deleteForm-{{ post.id }}">
+                                    <button type="button" class="text-white bg-red-500 hover:bg-red-700 px-4 py-2 rounded-md text-sm" onclick="confirmDelete({{ post.id }})">
+                                        Verwijderen
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+            
+            
+            {% else %}
+            <p class="text-gray-700"><em>Deze gebruiker heeft nog geen posts.</em></p>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if isOwnProfile %}
+    <div class="text-center mt-6">
+        <button id="openModalBtn"
+            class="bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-200">
+            Edit Details
+        </button>
+    </div>
+
+    <!-- Modal voor profielbewerking -->
+    <div id="profileModal" class="hidden fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
+            <h2 class="text-2xl font-semibold text-center mb-6">Bewerk Profiel</h2>
+            <form action="/profile" method="POST" enctype="multipart/form-data" class="space-y-4">
+                <div>
+                    <label class="block text-lg font-medium text-gray-700">Gebruikersnaam</label>
+                    <input type="text" name="username" value="{{ user.username }}" required class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500">
+                </div>
+            
+                <div>
+                    <label class="block text-lg font-medium text-gray-700">Bio</label>
+                    <textarea name="bio" rows="4" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500">{{ user.bio }}</textarea>
+                </div>
+            
+                <div>
+                    <label class="block text-lg font-medium text-gray-700">Nieuw wachtwoord</label>
+                    <input type="password" name="password" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500">
+                </div>
+            
+                <div>
+                    <label class="block text-lg font-medium text-gray-700">Bevestig wachtwoord</label>
+                    <input type="password" name="password_confirm" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500">
+                </div>
+            
+                <div>
+                    <label class="block text-lg font-medium text-gray-700">Profielfoto</label>
+                    <input type="file" name="profile_picture" accept=".jpg, .jpeg, .png" class="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500">
+                </div>
+            
+                <div class="flex justify-end space-x-4">
+                    <button type="button" id="closeModalBtn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg">Annuleren</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Opslaan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    {% endif %}
+</section>
+{% endblock %}
+{% block extra_scripts %}
+{{ parent() }}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("profileModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalBtn = document.getElementById("closeModalBtn");
+
+        openModalBtn.addEventListener("click", function () {
+            modal.classList.remove("hidden");
+        });
+
+        closeModalBtn.addEventListener("click", function () {
+            modal.classList.add("hidden");
+        });
+
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                modal.classList.add("hidden");
+            }
+        });
+    });
+    function confirmDelete(postId) {
+        const confirmation = confirm("Weet je zeker dat je deze post wilt verwijderen?");
+        if (confirmation) {
+            // Als de gebruiker bevestigt, verzend het formulier
+            document.getElementById("deleteForm-" + postId).submit();
+        }
+    }
+</script>
+{% endblock %}

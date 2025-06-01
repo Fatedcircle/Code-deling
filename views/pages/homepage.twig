@@ -1,0 +1,133 @@
+{% extends "layouts/main.twig" %}
+
+{% block header %}{{ parent() }}{% endblock %}
+
+{% block main %}
+<section class="w-11/12 2xl:w-1/2 m-auto">
+    <h1 class="text-3xl font-bold mb-4 text-center">Users and Posts</h1>
+
+    <!-- Zoekbalken in 2-koloms layout -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Gebruiker zoeken -->
+        <form method="GET" action="/" class="flex flex-col p-4 border rounded-lg shadow bg-white">
+            <label for="user_search" class="text-lg font-semibold mb-2">Zoek gebruiker</label>
+            <input type="text" id="user_search" name="user_search" placeholder="Zoek op gebruikersnaam"
+                value="{{ user_search }}" class="border p-2 w-full rounded">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mt-3 transition">
+                Zoeken
+            </button>
+        </form>
+
+        <!-- Post zoeken -->
+        <form method="GET" action="/" class="flex flex-col p-4 border rounded-lg shadow bg-white">
+            <label for="post_search" class="text-lg font-semibold mb-2">Zoek post</label>
+            <input type="text" id="post_search" name="post_search" placeholder="Zoek op posttitel"
+                value="{{ post_search }}" class="border p-2 w-full rounded">
+            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mt-3 transition">
+                Zoeken
+            </button>
+        </form>
+    </div>
+
+    {% if user_not_found_message %}
+    <p class="text-red-500">{{ user_not_found_message }}</p>
+    {% endif %}
+
+    {% if users is not empty %}
+    {% for user in users %}
+    <div class="user-container border-b border-gray-500 pb-4 mb-6">
+        <h2 class="text-5xl text-red-500">{{ user.username }}</h2>
+
+        {% set user_posts = posts|filter(p => p.user_id == user.id) %}
+        {% if user_posts|length > 0 %}
+        <ul>
+            {% for post in user_posts %}
+            <li id="post-{{ post.id }}" class="post my-4 code-block {{ post.theme }} w-full">
+                <p class="text-sm text-gray-500">
+                    Gepost door
+                    <a href="/profile/{{ post.user.username }}" class="text-red-600 hover:underline">
+                        {{ post.user.username }}
+                    </a>
+                </p>
+
+                <strong>{{ post.title }}</strong> - {{ post.created_at }}
+                <p>{{ post.content }}</p>
+                <p class="text-center my-2 font-semibold text-lg">{{ post.language }}</p>
+                <pre><code class="{{ post.language | lower }} mb-2">{{ post.language_content }}</code></pre>
+                <p>{{ post.caption }}</p>
+                <form action="/fork/{{ post.id }}" method="POST">
+                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded mt-4">
+                        Fork this code
+                    </button>
+                </form>
+                <!-- Like-knop met POST-request -->
+                <form method="POST" action="/">
+                    <input type="hidden" name="post_id" value="{{ post.id }}">
+                    <button type="submit" class="bg-red-300 text-white px-4 py-2 rounded">
+                        {% if session.liked_posts is iterable and post.id in session.liked_posts %}
+                        🧠 Unlike
+                        {% else %}
+                        ❤️ Like
+                        {% endif %}
+                    </button>
+                </form>
+                <p class="mt-2">{{ post.like_count }} likes</p>
+                <p class="mt-2">
+                    <a href="/post/{{ post.id }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                        Bekijk reacties ({{ post.comment_count }})
+                    </a>
+                </p>
+
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-gray-400">Deze gebruiker heeft nog geen posts.</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <h3 class="text-xl mb-4">Alle posts:</h3>
+    {% for post in posts %}
+    <div id="post-{{ post.id }}" class="post code-block my-4 {{ post.theme }} w-full">
+        <p class="text-sm text-gray-500">
+            Gepost door
+            <a href="/profile/{{ post.user.username }}" class="text-red-600 hover:underline">
+                {{ post.user.username }}
+            </a>
+        </p>
+
+        <strong>{{ post.title }}</strong> - {{ post.created_at }}
+        <p>{{ post.content }}</p>
+        <p class="text-center my-2 font-semibold text-lg">{{ post.language }}</p>
+        <pre><code class="{{ post.language | lower }} mb-2">{{ post.language_content }}</code></pre>
+        <p>{{ post.caption }}</p>
+
+        <form action="/fork/{{ post.id }}" method="POST">
+            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded mt-4">
+                Fork this code
+            </button>
+        </form>
+
+        <!-- Like-knop met POST-request -->
+        <form method="POST" action="/">
+            <input type="hidden" name="post_id" value="{{ post.id }}">
+            <button type="submit" class="bg-red-300 text-white px-4 py-2 rounded">
+                {% if session.liked_posts is iterable and post.id in session.liked_posts %}
+                🧠 Unlike
+                {% else %}
+                ❤️ Like
+                {% endif %}
+            </button>
+        </form>
+        <p class="mt-2">{{ post.like_count }} likes</p>
+        <p class="mt-2">
+            <a href="/post/{{ post.id }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                Bekijk reacties ({{ post.comment_count }})
+            </a>
+        </p>
+    </div>
+    {% endfor %}
+    {% endif %}
+</section>
+{% endblock %}

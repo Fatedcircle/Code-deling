@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+@theme {
+    
+}
+body {
+    background-color: #ccc;
+}
+
+/* Light Theme */
+.code-block.light {
+    background-color: #f5f5f5; /* Lichtgrijze achtergrond */
+    color: #333; /* Donkere tekst */
+    border-left: 4px solid #3b82f6; /* Blauwe linkerborder voor accenten */
+    padding: 1rem; /* Padding rondom de code */
+    border-radius: 0.375rem; /* Afgeronde hoeken */
+    font-family: 'Courier New', Courier, monospace; /* Monospace lettertype */
+    overflow-x: auto; /* Scrollen voor lange regels */
+}
+
+.code-block.light pre {
+    margin: 0; /* Verwijder marge van de <pre> tag */
+}
+/* Dark Theme */
+.code-block.dark {
+    background-color: #2e2e2e; /* Donkere achtergrond */
+    color: #f5f5f5; /* Witte tekst */
+    border-left: 4px solid #8b5cf6; /* Paarsachtige linkerborder */
+    padding: 1rem; /* Padding rondom de code */
+    border-radius: 0.375rem; /* Afgeronde hoeken */
+    font-family: 'Courier New', Courier, monospace; /* Monospace lettertype */
+    overflow-x: auto; /* Scrollen voor lange regels */
+}
+
+.code-block.dark pre {
+    margin: 0; /* Verwijder marge van de <pre> tag */
+}
+/* Solarized Theme */
+.code-block.solarized {
+    background-color: #fdf6e3; /* Solarized achtergrondkleur */
+    color: #586e75; /* Grijze tekst */
+    border-left: 4px solid #2aa198; /* Solarized teal voor accenten */
+    padding: 1rem; /* Padding rondom de code */
+    border-radius: 0.375rem; /* Afgeronde hoeken */
+    font-family: 'Courier New', Courier, monospace; /* Monospace lettertype */
+    overflow-x: auto; /* Scrollen voor lange regels */
+}
+
+.code-block.solarized pre {
+    margin: 0; /* Verwijder marge van de <pre> tag */
+}
+/* Monokai Theme */
+.code-block.monokai {
+    background-color: #272822; /* Donkere, Monokai-achtige achtergrond */
+    color: #f8f8f2; /* Lichte tekstkleur */
+    border-left: 4px solid #f92672; /* Monokai roze accentkleur */
+    padding: 1rem; /* Padding rondom de code */
+    border-radius: 0.375rem; /* Afgeronde hoeken */
+    font-family: 'Courier New', Courier, monospace; /* Monospace lettertype */
+    overflow-x: auto; /* Scrollen voor lange regels */
+}
+
+.code-block.monokai pre {
+    margin: 0; /* Verwijder marge van de <pre> tag */
+}
+
+.profile-initial {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #555; /* Grijze achtergrond */
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover; /* Zorgt ervoor dat de afbeelding goed wordt geschaald in de cirkel */
+}
+
+.fallback-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #6B7280; /* Grijze achtergrond voor de fallback */
+    color: white; /* Witte tekst voor de initialen */
+    font-size: 2rem; /* Grotere tekstgrootte */
+    font-weight: bold;
+    text-transform: uppercase; /* Maakt de initialen hoofdletters */
+}
+
+
+
+/* Hamburger button */
+.hamburger-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+/* Mobile menu styles */
+#mobile-menu {
+
+    background-color: #2d3748;
+    color: white;
+    padding: 1rem;
+}
+
+/* Zorg ervoor dat de mobile menu zichtbaar is wanneer de hamburger wordt geklikt */
+#hamburger-menu.active + #mobile-menu {
+    display: block;
+}
