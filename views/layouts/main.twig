@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Binsta</title>
     <link rel="stylesheet" href="/style.css">
-    <!-- Highlight.js CSS (Light Theme, je kunt ook 'dark' of een andere kiezen) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
 </head>
 
@@ -39,11 +38,10 @@
         
             if (profileImage && dropdownMenu) {
                 profileImage.addEventListener("click", function (event) {
-                    event.stopPropagation(); // Voorkomt dat het meteen sluit
+                    event.stopPropagation();
                     dropdownMenu.classList.toggle("hidden");
                 });
         
-                // Sluit de dropdown als je ergens anders klikt
                 document.addEventListener("click", function (event) {
                     if (!profileImage.contains(event.target) && !dropdownMenu.contains(event.target)) {
                         dropdownMenu.classList.add("hidden");
